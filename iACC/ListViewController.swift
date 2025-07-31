@@ -166,7 +166,8 @@ class ListViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let item = items[indexPath.row]
 		let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "ItemCell")
-		cell.configure(item, longDateStyle: longDateStyle)
+        let viewModel = ItemViewModel(item, longDateStyle: longDateStyle)
+		cell.configure(viewModel)
 		return cell
 	}
 	
@@ -207,51 +208,42 @@ class ListViewController: UITableViewController {
 }
 
 // Instead of Any , pass a type that cell needs- one that has title & subtitle
+// If you want to decouple ItemViewModel from concreate types - Friend, Card, Transfer then create custom initializers but as part of extensions and each extensions can go in seperate modules(Transfer Presentation module, Card Presentation Module etc etc). Just make struct of ItemViewModel public & cr8 init for it
+// For ex- you can Transfer Module and all the logic related to Transfer can go there ,
 struct ItemViewModel {
     let title: String
     let subtitle: String
     
     init(_ item: Any, longDateStyle: Bool) {
         if let friend = item as? Friend {
-            title = friend.name
-            subtitle = friend.phone
+            self.init(friend: friend)
         } else if let card = item as? Card {
-            title = card.number
-            subtitle = card.holder
+            self.init(card: card)
         } else if let transfer = item as? Transfer {
-            let numberFormatter = Formatters.number
-            numberFormatter.numberStyle = .currency
-            numberFormatter.currencyCode = transfer.currencyCode
-            
-            let amount = numberFormatter.string(from: transfer.amount as NSNumber)!
-            title = "\(amount) • \(transfer.description)"
-            
-            let dateFormatter = Formatters.date
-            if longDateStyle {
-                dateFormatter.dateStyle = .long
-                dateFormatter.timeStyle = .short
-                subtitle = "Sent to: \(transfer.recipient) on \(dateFormatter.string(from: transfer.date))"
-            } else {
-                dateFormatter.dateStyle = .short
-                dateFormatter.timeStyle = .short
-                subtitle = "Received from: \(transfer.sender) on \(dateFormatter.string(from: transfer.date))"
-            }
+            self.init(transfer: transfer, longDateStyle: longDateStyle)
         } else {
             fatalError("unknown item: \(item)")
         }
     }
-    
-    // only transfer needs longDataStyle
+}
+
+extension ItemViewModel {
     init(friend: Friend) {
         title = friend.name
         subtitle = friend.phone
     }
-    
+}
+
+extension ItemViewModel {
     init(card: Card) {
         title = card.number
         subtitle = card.holder
     }
-    
+}
+
+// only transfer needs longDataStyle
+// These extension can go in transfer Module
+extension ItemViewModel {
     init(transfer: Transfer, longDateStyle: Bool) {
         let numberFormatter = Formatters.number
         numberFormatter.numberStyle = .currency
@@ -273,34 +265,12 @@ struct ItemViewModel {
     }
 }
 
+
 extension UITableViewCell {
-	func configure(_ item: Any, longDateStyle: Bool) {
-		if let friend = item as? Friend {
-			textLabel?.text = friend.name
-			detailTextLabel?.text = friend.phone
-		} else if let card = item as? Card {
-			textLabel?.text = card.number
-			detailTextLabel?.text = card.holder
-		} else if let transfer = item as? Transfer {
-			let numberFormatter = Formatters.number
-			numberFormatter.numberStyle = .currency
-			numberFormatter.currencyCode = transfer.currencyCode
-			
-			let amount = numberFormatter.string(from: transfer.amount as NSNumber)!
-			textLabel?.text = "\(amount) • \(transfer.description)"
-			
-			let dateFormatter = Formatters.date
-			if longDateStyle {
-				dateFormatter.dateStyle = .long
-				dateFormatter.timeStyle = .short
-				detailTextLabel?.text = "Sent to: \(transfer.recipient) on \(dateFormatter.string(from: transfer.date))"
-			} else {
-				dateFormatter.dateStyle = .short
-				dateFormatter.timeStyle = .short
-				detailTextLabel?.text = "Received from: \(transfer.sender) on \(dateFormatter.string(from: transfer.date))"
-			}
-		} else {
-			fatalError("unknown item: \(item)")
-		}
+    // Ideally cell shouldn't create its own ViewModel so let's move the viewModel one level above
+    // Now you can pass any ItemViewModel - friend, card, transfer, article etc etc. Don't need to change the cell anymore , just need to convert Model(from API) into ItemViewModel(UI Model)
+	func configure(_ viewModel: ItemViewModel) {
+        textLabel?.text = viewModel.title
+        detailTextLabel?.text = viewModel.subtitle
 	}
 }
