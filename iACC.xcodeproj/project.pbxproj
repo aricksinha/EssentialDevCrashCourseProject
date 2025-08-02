@@ -55,6 +55,7 @@
 		9A26EDD72E3E062E001F8615 /* AdapterPattern.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD62E3E062E001F8615 /* AdapterPattern.png */; };
 		9A26EDD92E3E2629001F8615 /* DiagramPostStep8.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */; };
 		9A26EDDB2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */; };
+		9A26EDDD2E3E7590001F8615 /* FinalDepenedncyDiagram.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDDC2E3E7590001F8615 /* FinalDepenedncyDiagram.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		9A26EDD62E3E062E001F8615 /* AdapterPattern.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AdapterPattern.png; sourceTree = "<group>"; };
 		9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DiagramPostStep8.png; sourceTree = "<group>"; };
 		9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AddArticleFeatureDiagramPostStep8.png; sourceTree = "<group>"; };
+		9A26EDDC2E3E7590001F8615 /* FinalDepenedncyDiagram.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FinalDepenedncyDiagram.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +205,7 @@
 		08927BC22686185C009195BD /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9A26EDDC2E3E7590001F8615 /* FinalDepenedncyDiagram.png */,
 				9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */,
 				9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */,
 				9A26EDD62E3E062E001F8615 /* AdapterPattern.png */,
@@ -377,6 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A26EDDB2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png in Resources */,
+				9A26EDDD2E3E7590001F8615 /* FinalDepenedncyDiagram.png in Resources */,
 				9A26EDD72E3E062E001F8615 /* AdapterPattern.png in Resources */,
 				0867C0032BD7A52A00635795 /* README.md in Resources */,
 				08927B9F2686183B009195BD /* LaunchScreen.storyboard in Resources */,
