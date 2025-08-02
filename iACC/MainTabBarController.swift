@@ -86,6 +86,12 @@ class MainTabBarController: UITabBarController {
 	private func makeCardsList() -> ListViewController {
 		let vc = ListViewController()
 		vc.fromCardsScreen = true
+        vc.shouldRetry = false
+        vc.title = "Cards"
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: vc, action: #selector(addCard))
+        vc.service = CardsAPIItemServiceAdapter(api: CardAPI.shared, select: { [weak vc] item in
+            vc?.select(card: item)
+        })
 		return vc
 	}
 	
@@ -115,3 +121,27 @@ struct FriendsAPIItemServiceAdapter: ItemsService {
     }
 }
 
+/// **NULL OBJECT PATTERN** - Defines a instance with same interface but does nothing.Ex given below
+class NullFriendsCache: FriendsCache {
+    override func save(_ newFriends: [Friend]) {}
+}
+
+//STEP-6: Extract logic for Cards
+struct CardsAPIItemServiceAdapter: ItemsService {
+    let api: CardAPI
+    let select: (Card) -> Void // inject logic from outside this class
+    
+    func loadItems(completion: @escaping (Result<[ItemViewModel], any Error>) -> Void) {
+        api.loadCards { items in
+            DispatchQueue.mainAsyncIfNeeded {
+                completion(items.map{ items in
+                    items.map { card in
+                        ItemViewModel(card: card) {
+                            select(card)
+                        }
+                    }
+                })
+            }
+        }
+    }
+}
