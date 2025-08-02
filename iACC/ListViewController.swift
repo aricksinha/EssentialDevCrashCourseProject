@@ -85,25 +85,8 @@ class ListViewController: UITableViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
 		refreshControl = UIRefreshControl()
 		refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        if fromSentTransfersScreen {
-			shouldRetry = true
-			maxRetryCount = 1
-			longDateStyle = true
-
-			navigationItem.title = "Sent"
-			navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Send", style: .done, target: self, action: #selector(sendMoney))
-
-		} else if fromReceivedTransfersScreen {
-			shouldRetry = true
-			maxRetryCount = 1
-			longDateStyle = false
-			
-			navigationItem.title = "Received"
-			navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Request", style: .done, target: self, action: #selector(requestMoney))
-		}
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -116,53 +99,31 @@ class ListViewController: UITableViewController {
 	
 	@objc private func refresh() {
 		refreshControl?.beginRefreshing()
-		if fromFriendsScreen {
-            // Step 4.1: Map the result into ItemViewModel - No type checking.
-            // Move logic where we know the context so that no typecasting is needed
-            
-            // Fetches data directly from Concreate APIs with if else statements
-            // Deals with threading & catching, accessing dependency Globally
-            
-            // Step 5: To make this VC reusable , we need to eliminate Concreate Dependencies of FriendsAPI, CardsAPI, TransferAPI using **🔥 DEPENDENCY INVERSION PRINCIPLE** 🔥.
-            // Need a common abstraction to seperate concreate types, For that abstraction we can use PROTOCOL, CLASS, CLOSURE
-            /* - Code moved to
-			service?.loadItems { [weak self] result in
-				DispatchQueue.mainAsyncIfNeeded {
-                    self?.handleAPIResult(result.map{ items in
-                        if User.shared?.isPremium == true {
-                            (UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate).cache.save(items)
+        // Step 4.1: Map the result into ItemViewModel - No type checking.
+        // Move logic where we know the context so that no typecasting is needed
+        
+        // Fetches data directly from Concreate APIs with if else statements
+        // Deals with threading & catching, accessing dependency Globally
+        
+        // Step 5: To make this VC reusable , we need to eliminate Concreate Dependencies of FriendsAPI, CardsAPI, TransferAPI using **🔥 DEPENDENCY INVERSION PRINCIPLE** 🔥.
+        // Need a common abstraction to seperate concreate types, For that abstraction we can use PROTOCOL, CLASS, CLOSURE
+        /* - Code moved to
+        service?.loadItems { [weak self] result in
+            DispatchQueue.mainAsyncIfNeeded {
+                self?.handleAPIResult(result.map{ items in
+                    if User.shared?.isPremium == true {
+                        (UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate).cache.save(items)
+                    }
+                   return items.map { friend in
+                        ItemViewModel(friend: friend) {
+                            self?.select(friend: friend)
                         }
-                       return items.map { friend in
-                            ItemViewModel(friend: friend) {
-                                self?.select(friend: friend)
-                            }
-                        }
-                    })
-				}
-			}
-             */
-            service?.loadItems(completion: handleAPIResult)
-            
-		} else if fromCardsScreen {
-            service?.loadItems(completion: handleAPIResult)
-		} else if fromSentTransfersScreen || fromReceivedTransfersScreen {
-			TransfersAPI.shared.loadTransfers { [weak self, longDateStyle, fromSentTransfersScreen] result in
-				DispatchQueue.mainAsyncIfNeeded {
-                    self?.handleAPIResult(result.map{
-                        items in
-                        items
-                            .filter{ fromSentTransfersScreen ? $0.isSender : !$0.isSender }
-                            .map { transfer in
-                                ItemViewModel(transfer: transfer, longDateStyle: longDateStyle) {
-                                    self?.select(transfer: transfer)
-                                }
-                            }
-                    })
-				}
-			}
-		} else {
-			fatalError("unknown context")
-		}
+                    }
+                })
+            }
+        }
+         */
+        service?.loadItems(completion: handleAPIResult)
 	}
 	
     // Step 4.1 : Instead of accepting T , accept ItemViewModel, remove Generics
