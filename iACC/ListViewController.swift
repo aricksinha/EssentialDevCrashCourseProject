@@ -238,6 +238,23 @@ extension ItemViewModel {
     }
 }
 
+// STEP-10: Can ItemViewModel be protocol? - Yes, coz protocol also allows this goal to allowing new model types w/o changing VC. So VC depends on protocol not on implementation
+// Still I will recommend using structure for ItemViewModel is who will implement protocol? - The model, we have issues with using protocol ItemViewModable
+protocol ItemViewModable {
+    var title: String { get }
+    var subtitle: String { get }
+    func select()
+}
+
+extension Friend: ItemViewModable {
+    var title: String { name }
+    var subtitle: String { phone }
+    // issue with ItemViewModable protocol , it can't use select method, coz select method is supposed to perform nav logic, you don't want ur models to perform nav logic as it couples domain logic with UI detail, with nav details
+    // REMEMBER: DOMAIN MODELS SHOULD BE FREE FROM UI, so as to reused across apps with diff UI.
+    // So while using protocol for ItemViewModel , u still need to create another type to implement it. So rather use struct
+    func select() {}
+}
+
 
 extension UITableViewCell {
     // Ideally cell shouldn't create its own ViewModel so let's move the viewModel one level above
