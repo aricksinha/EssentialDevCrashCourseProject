@@ -12,6 +12,7 @@ import UIKit
  
  - Aim is to make this more reusable, flexible , polymorphic in nature, easier to extend
  - We can always replace booleans with polymorphism
+ - Post Step 8- Adding new feature lets say Article, nothing changes in ListVC, Cell, itemViewModel, ItemService. Add ArticleAPI w/o coupling it with UI and add ArticleItemServiceAdapter, also Article Model needs to converted to ItemViewModel (refer AddArticleFeaturePostStep8 image)
  */
 
 // STEP 5.1- ABSTRACT INTERFACE for Concreate Dependencies. But still we can't make use of this Protocol well, as FriendAPI: APIService will implement all 3 methods, same issue with CardAPI , TransferAPI so this Protocol violates INTERFACE SEGREGATION PRINCIPLE - ISSUE
@@ -70,18 +71,7 @@ extension FriendsAPI: ItemsService {
 
 class ListViewController: UITableViewController {
 	var items = [ItemViewModel]()
-	
     var service: ItemsService?
-	var retryCount = 0
-	var maxRetryCount = 0
-	var shouldRetry = false
-	
-	var longDateStyle = false
-	
-	var fromReceivedTransfersScreen = false
-	var fromSentTransfersScreen = false
-	var fromCardsScreen = false
-	var fromFriendsScreen = false
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -134,33 +124,26 @@ class ListViewController: UITableViewController {
 	private func handleAPIResult(_ result: Result<[ItemViewModel], Error>) {
 		switch result {
 		case let .success(items):
-			self.retryCount = 0
             // Step 4: In this context we don't know the type
             self.items = items
 			self.refreshControl?.endRefreshing()
 			self.tableView.reloadData()
 			
 		case let .failure(error):
-            // Retry logic with multiple mutable state
-			if shouldRetry && retryCount < maxRetryCount {
-				retryCount += 1
-				refresh()
-				return
-			}
-			
-			retryCount = 0
-			
-            // catching logic
+            self.showError(error: error)
+            self.refreshControl?.endRefreshing()
+            // catching logic - we can have friends cache adapter
+            // Step8- still VC needs to know these bool which is a ISSUE.Need to eliminate it
+            // cache:ItemService and service:ItemService , VC doesn't abt Concreate Implementation which means we can use another Design Pattern
+            /// **COMPOSITE DESIGN PATTERN**- TO compose diff implementation into single one
+            /*
 			if fromFriendsScreen && User.shared?.isPremium == true {
-				(UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate).cache.loadFriends { [weak self] result in
+                
+                service?.loadItems { [weak self] result in
 					DispatchQueue.mainAsyncIfNeeded {
 						switch result {
 						case let .success(items):
-                            self?.items = items.map { item in
-                                ItemViewModel(friend: item, selection: { [weak self] in
-                                    self?.select(friend: item)
-                                })
-                            }
+                            self?.items = items
 							self?.tableView.reloadData()
 							
 						case let .failure(error):
@@ -169,10 +152,12 @@ class ListViewController: UITableViewController {
 						self?.refreshControl?.endRefreshing()
 					}
 				}
+                
 			} else {
                 self.showError(error: error)
 				self.refreshControl?.endRefreshing()
 			}
+             */
 		}
 	}
     

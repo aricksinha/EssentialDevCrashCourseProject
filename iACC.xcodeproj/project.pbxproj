@@ -53,6 +53,8 @@
 		9A26EDD32E3E01FF001F8615 /* DIPViolation.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD22E3E01FF001F8615 /* DIPViolation.png */; };
 		9A26EDD52E3E024F001F8615 /* SRPandDIPViolation.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD42E3E024F001F8615 /* SRPandDIPViolation.png */; };
 		9A26EDD72E3E062E001F8615 /* AdapterPattern.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD62E3E062E001F8615 /* AdapterPattern.png */; };
+		9A26EDD92E3E2629001F8615 /* DiagramPostStep8.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */; };
+		9A26EDDB2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +118,8 @@
 		9A26EDD22E3E01FF001F8615 /* DIPViolation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DIPViolation.png; sourceTree = "<group>"; };
 		9A26EDD42E3E024F001F8615 /* SRPandDIPViolation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SRPandDIPViolation.png; sourceTree = "<group>"; };
 		9A26EDD62E3E062E001F8615 /* AdapterPattern.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AdapterPattern.png; sourceTree = "<group>"; };
+		9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DiagramPostStep8.png; sourceTree = "<group>"; };
+		9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AddArticleFeatureDiagramPostStep8.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +203,8 @@
 		08927BC22686185C009195BD /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */,
+				9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */,
 				9A26EDD62E3E062E001F8615 /* AdapterPattern.png */,
 				9A26EDD42E3E024F001F8615 /* SRPandDIPViolation.png */,
 				9A26EDD22E3E01FF001F8615 /* DIPViolation.png */,
@@ -370,12 +376,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A26EDDB2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png in Resources */,
 				9A26EDD72E3E062E001F8615 /* AdapterPattern.png in Resources */,
 				0867C0032BD7A52A00635795 /* README.md in Resources */,
 				08927B9F2686183B009195BD /* LaunchScreen.storyboard in Resources */,
 				9A26EDCF2E3B66AA001F8615 /* DiagramPostStep4.png in Resources */,
 				08927B9C2686183B009195BD /* Assets.xcassets in Resources */,
 				9A26EDD52E3E024F001F8615 /* SRPandDIPViolation.png in Resources */,
+				9A26EDD92E3E2629001F8615 /* DiagramPostStep8.png in Resources */,
 				9A26EDD32E3E01FF001F8615 /* DIPViolation.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
