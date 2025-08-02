@@ -56,6 +56,7 @@
 		9A26EDD92E3E2629001F8615 /* DiagramPostStep8.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */; };
 		9A26EDDB2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */; };
 		9A26EDDD2E3E7590001F8615 /* FinalDepenedncyDiagram.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A26EDDC2E3E7590001F8615 /* FinalDepenedncyDiagram.png */; };
+		9A26EDDF2E3E76C3001F8615 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A26EDDE2E3E76C3001F8615 /* ListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +123,7 @@
 		9A26EDD82E3E2629001F8615 /* DiagramPostStep8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DiagramPostStep8.png; sourceTree = "<group>"; };
 		9A26EDDA2E3E2671001F8615 /* AddArticleFeatureDiagramPostStep8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AddArticleFeatureDiagramPostStep8.png; sourceTree = "<group>"; };
 		9A26EDDC2E3E7590001F8615 /* FinalDepenedncyDiagram.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FinalDepenedncyDiagram.png; sourceTree = "<group>"; };
+		9A26EDDE2E3E76C3001F8615 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +177,7 @@
 				08927B922686183A009195BD /* AppDelegate.swift */,
 				08927B942686183A009195BD /* SceneDelegate.swift */,
 				08040FFB268B4C1D0062A93B /* MainTabBarController.swift */,
+				9A26EDDE2E3E76C3001F8615 /* ListView.swift */,
 				08927BC5268618AC009195BD /* ListViewController.swift */,
 				08927BC3268618AC009195BD /* SegmentNavigationViewController.swift */,
 				08927BCC268618AC009195BD /* NotImplementedViewControllers.swift */,
@@ -416,6 +419,7 @@
 				080833E0268F609C00A8099A /* Helpers.swift in Sources */,
 				08927BCD268618AC009195BD /* SegmentNavigationViewController.swift in Sources */,
 				080833E2268F69C200A8099A /* ArticlesAPI.swift in Sources */,
+				9A26EDDF2E3E76C3001F8615 /* ListView.swift in Sources */,
 				08927B952686183A009195BD /* SceneDelegate.swift in Sources */,
 				08927BD2268618AC009195BD /* TransfersAPI.swift in Sources */,
 				08927BD4268618AC009195BD /* User.swift in Sources */,

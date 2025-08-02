@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class MainTabBarController: UITabBarController {
     private var friendsCache: FriendsCache!
@@ -53,12 +54,26 @@ class MainTabBarController: UITabBarController {
 		return vc
 	}
 	
-	private func makeFriendsList() -> ListViewController {
-		let vc = ListViewController()
-        vc.title = "Friends"
-        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: vc, action: #selector(addFriend))
+	private func makeFriendsList() -> UIViewController {
+        weak var lazyVC: UIHostingController<ListView>? // for SwiftUI
         
         let isPremium = User.shared?.isPremium == true
+        
+        // CODE FOR UIKit controller
+      /*
+        let vc = ListViewController()
+        vc.title = "Friends"
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: vc, action: #selector(addFriend))
+       */
+       
+        
+        //CODE FOR SWIFTUI - to run SwiftUI code uncomment it
+        //Step-9: Calling SwiftUI View - ListView to replace UIKit UI framework with SwiftUI UI framework to proove that our logic is reusable
+        
+        let vc = UIHostingController(rootView: ListView())
+        vc.title = "Friends"
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: vc, action: #selector(addFriend))
+         
         
         // applying composite pattern
         let api =  FriendsAPIItemServiceAdapter(
@@ -70,10 +85,17 @@ class MainTabBarController: UITabBarController {
         let cache = FriendsCacheItemServiceAdapter(cache: friendsCache) { [weak vc] item in
             vc?.select(friend: item)
         }
+        
         // it loads from api first if it fails load from cache
         // moved this if fromFriendsScreen && User.shared?.isPremium == true decision here
         // as retry count is 2
-        vc.service =  isPremium ? api.fallback(cache) : api // used helper method
+        let service =  isPremium ? api.fallback(cache) : api // used helper method
+        // for swiftUI view - uncomment to run swiftUI code
+        
+        vc.rootView.service = service
+        lazyVC = vc
+         
+      //  vc.service = service
 		return vc
 	}
 	
@@ -111,6 +133,9 @@ class MainTabBarController: UITabBarController {
 		return vc
 	}
 	
+    private func makeViewConfiguration(vc: UIViewController) {
+        
+    }
 }
 
 // Also refer to SRPandDIP violation image
