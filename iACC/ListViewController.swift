@@ -10,12 +10,68 @@ import UIKit
  
  - Fatal Error is violates Liskov Substitution Principle - interface here says that u can handle any type but fatal error says it can't.It crashes if Item is not a friend, card or transfer
  
- -
- 
+ - Aim is to make this more reusable, flexible , polymorphic in nature, easier to extend
+ - We can always replace booleans with polymorphism
  */
+
+// STEP 5.1- ABSTRACT INTERFACE for Concreate Dependencies. But still we can't make use of this Protocol well, as FriendAPI: APIService will implement all 3 methods, same issue with CardAPI , TransferAPI so this Protocol violates INTERFACE SEGREGATION PRINCIPLE - ISSUE
+/*
+ protocol APIService {
+    func loadFriends(completion: @escaping (Result<[Friend], any Error>) -> Void)
+    func loadCards(completion: @escaping (Result<[Card], any Error>) -> Void)
+    func loadTransfers(completion: @escaping (Result<[Transfer], any Error>) -> Void)
+}
+*/
+
+// STEP 5.2: We need to know VC gets decouple from the concept of having to know which service/method to call. We should have one method only that can load any type-Friend,card,transfer etc.
+// Problem with bunch of protocol(FriendsService, CardsService, TransferService) is Violates SRP - Solution is move the decision one level above where u have more context- that means, VC shdn't decide which service to use, We shd define a specific service for the VC witth exactly the VC needs.
+// What VC needs? - Array of ItemViewModel. We need a protocol that has a method to load list of ItemViewModel
+
+/*
+ protocol FriendsService {
+     func loadFriends(completion: @escaping (Result<[Friend], any Error>) -> Void)
+ }
+
+ protocol CardsService {
+     func loadCards(completion: @escaping (Result<[Card], any Error>) -> Void)
+ }
+
+ protocol TransferService {
+     func loadTransfers(completion: @escaping (Result<[Transfer], any Error>) -> Void)
+ }
+
+ extension FriendsAPI: FriendsService {
+     
+ }
+
+ extension CardAPI: CardsService {
+     
+ }
+
+ extension TransfersAPI: TransferService {
+     
+ }
+ */
+
+// Step5.3: Just a abstraction regardless of datasource- API, Cache. This is called STRATEGY PATTERN. When u have 1 interface with many diff implementation/ diff context
+protocol ItemsService {
+    func loadItems(completion: @escaping (Result<[ItemViewModel], any Error>) -> Void)
+}
+
+// Refer to DIPViolation diagram
+// If FriendsAPI: ItemsService. We are coupling FriendsAPI(high level component) with low level component(The UI) - DIP Violation. API Implementations(like FriendAPI) are generally generic component Can be used in any apps.API implementation shdn't be coupled with UI in this case UIKit. What if we want to use it with other UI framework like SwiftUI/Appkit/Watchkit etc
+/*
+extension FriendsAPI: ItemsService {
+    func loadItems(completion: @escaping (Result<[ItemViewModel], any Error>) -> Void) {
+        <#code#>
+    }
+}
+ */
+
 class ListViewController: UITableViewController {
 	var items = [ItemViewModel]()
 	
+    var service: ItemsService?
 	var retryCount = 0
 	var maxRetryCount = 0
 	var shouldRetry = false
@@ -32,16 +88,7 @@ class ListViewController: UITableViewController {
 		
 		refreshControl = UIRefreshControl()
 		refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
-		
-		if fromFriendsScreen {
-			shouldRetry = true
-			maxRetryCount = 2
-			
-			title = "Friends"
-			
-			navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFriend))
-			
-		} else if fromCardsScreen {
+		if fromCardsScreen {
 			shouldRetry = false
 			
 			title = "Cards"
@@ -79,7 +126,14 @@ class ListViewController: UITableViewController {
 		if fromFriendsScreen {
             // Step 4.1: Map the result into ItemViewModel - No type checking.
             // Move logic where we know the context so that no typecasting is needed
-			FriendsAPI.shared.loadFriends { [weak self] result in
+            
+            // Fetches data directly from Concreate APIs with if else statements
+            // Deals with threading & catching, accessing dependency Globally
+            
+            // Step 5: To make this VC reusable , we need to eliminate Concreate Dependencies of FriendsAPI, CardsAPI, TransferAPI using **🔥 DEPENDENCY INVERSION PRINCIPLE** 🔥.
+            // Need a common abstraction to seperate concreate types, For that abstraction we can use PROTOCOL, CLASS, CLOSURE
+            /* - Code moved to
+			service?.loadItems { [weak self] result in
 				DispatchQueue.mainAsyncIfNeeded {
                     self?.handleAPIResult(result.map{ items in
                         if User.shared?.isPremium == true {
@@ -93,6 +147,9 @@ class ListViewController: UITableViewController {
                     })
 				}
 			}
+             */
+            service?.loadItems(completion: handleAPIResult)
+            
 		} else if fromCardsScreen {
 			CardAPI.shared.loadCards { [weak self] result in
 				DispatchQueue.mainAsyncIfNeeded {
@@ -140,6 +197,7 @@ class ListViewController: UITableViewController {
 			self.tableView.reloadData()
 			
 		case let .failure(error):
+            // Retry logic with multiple mutable state
 			if shouldRetry && retryCount < maxRetryCount {
 				retryCount += 1
 				refresh()
@@ -148,6 +206,7 @@ class ListViewController: UITableViewController {
 			
 			retryCount = 0
 			
+            // catching logic
 			if fromFriendsScreen && User.shared?.isPremium == true {
 				(UIApplication.shared.connectedScenes.first?.delegate as! SceneDelegate).cache.loadFriends { [weak self] result in
 					DispatchQueue.mainAsyncIfNeeded {
@@ -207,18 +266,6 @@ struct ItemViewModel {
     let title: String
     let subtitle: String
     let select: () -> Void
-    
-    init(_ item: Any, longDateStyle: Bool, selection: @escaping () -> Void) {
-        if let friend = item as? Friend {
-            self.init(friend: friend, selection: selection)
-        } else if let card = item as? Card {
-            self.init(card: card, selection: selection)
-        } else if let transfer = item as? Transfer {
-            self.init(transfer: transfer, longDateStyle: longDateStyle, selection: selection)
-        } else {
-            fatalError("unknown item: \(item)")
-        }
-    }
 }
 
 extension ItemViewModel {
@@ -314,3 +361,9 @@ extension UIViewController {
         presenterVC.showDetailViewController(alert, sender: self)
     }
 }
+
+/// **NULL OBJECT PATTERN** - Defines a instance with same interface but does nothing.Ex given below
+class NullFriendsCache: FriendsCache {
+    override func save(_ newFriends: [Friend]) {}
+}
+

@@ -5,9 +5,11 @@
 import UIKit
 
 class MainTabBarController: UITabBarController {
-	
-	convenience init() {
+    private var friendsCache: FriendsCache!
+    
+    convenience init(friendsCache: FriendsCache) {
 		self.init(nibName: nil, bundle: nil)
+        self.friendsCache = friendsCache
 		self.setupViewController()
 	}
 
@@ -54,6 +56,18 @@ class MainTabBarController: UITabBarController {
 	private func makeFriendsList() -> ListViewController {
 		let vc = ListViewController()
 		vc.fromFriendsScreen = true
+        vc.shouldRetry = true
+        vc.maxRetryCount = 2
+        vc.title = "Friends"
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: vc, action: #selector(addFriend))
+        
+        let isPremium = User.shared?.isPremium == true
+        vc.service =  FriendsAPIItemServiceAdapter(
+            api: FriendsAPI.shared,
+            cache: isPremium ? friendsCache : NullFriendsCache(),
+            select: { [weak vc] item in
+                vc?.select(friend: item)
+            })
 		return vc
 	}
 	
@@ -76,3 +90,28 @@ class MainTabBarController: UITabBarController {
 	}
 	
 }
+
+// Also refer to SRPandDIP violation image
+//We don't want to couple the API with VC coz we want to use many diff APIs & easily plugin API, remove API
+/// To mitigate this problem use **ADAPTER PATTREN** to adapt the communication b/t 2 component w/o coupling them. Look at the Adapter pattern diagram
+struct FriendsAPIItemServiceAdapter: ItemsService {
+    let api: FriendsAPI
+    let cache: FriendsCache
+    let select: (Friend) -> Void  // inject logic from outside this class
+    
+    func loadItems(completion: @escaping (Result<[ItemViewModel], any Error>) -> Void) {
+        api.loadFriends {  result in
+            DispatchQueue.mainAsyncIfNeeded {
+                completion(result.map{ items in
+                    cache.save(items) // removed isPremium check & always send a msg but if we send this msg to NullFriendsCache and do nothing otherwise do something
+                   return items.map { friend in
+                        ItemViewModel(friend: friend) {
+                            select(friend)
+                        }
+                    }
+                })
+            }
+        }
+    }
+}
+
