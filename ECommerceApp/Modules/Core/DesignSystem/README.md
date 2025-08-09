@@ -1,0 +1,1 @@
+DesignSystem centralizes tokens for color, spacing, and typography to achieve consistent styling across the app.

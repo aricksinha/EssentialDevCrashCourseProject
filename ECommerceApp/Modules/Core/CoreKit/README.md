@@ -1,0 +1,1 @@
+CoreKit contains cross-cutting utilities used by multiple modules (e.g., logging, error types, helpers).

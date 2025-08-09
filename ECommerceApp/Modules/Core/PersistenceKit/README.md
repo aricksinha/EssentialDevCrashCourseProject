@@ -1,0 +1,1 @@
+PersistenceKit encapsulates persistence concerns like key-value storage, caching, and database access behind protocols.

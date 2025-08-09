@@ -1,0 +1,1 @@
+NetworkKit provides the `HTTPClient` abstraction and concrete implementations to perform HTTP requests.
